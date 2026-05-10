@@ -9,4 +9,4 @@ Code    |       Meaning         | When to use
 404     |       Not Found       | Resource doesn't exist 
 500     |       Internal Server Error Server Side Failure
     
- 
+   

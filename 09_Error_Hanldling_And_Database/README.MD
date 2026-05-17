@@ -6,5 +6,8 @@ Code    |       Meaning         | When to use
 400     |       Bad Request     | Invalid Cliend Input
 401     |       Unauthorized    | Authentication needed
 403     |       Forbidden       | No Permission
-404     |       Not Found       | Resource doesn't exist
+404     |       Not Found       | Resource doesn't exist 
 500     |       Internal Server Error Server Side Failure
+    
+
+

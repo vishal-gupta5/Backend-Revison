@@ -14,7 +14,7 @@ app.use("/", (req, res) => {
 
 app.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.params;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res

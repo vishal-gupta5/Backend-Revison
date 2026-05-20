@@ -10,6 +10,15 @@ app.use(express.json());
 
 app.post("/register", async (req, res) => {
   try {
+
+    const mandatoryField = ["firstName", "lastName", "age"];
+
+    const isAllowed = mandatoryField.every((k) => Object.keys(req.body).includes(k));
+
+    if (!isAllowed) {
+      throw new Errow("Field Missing!")
+    }
+
     const { firstName, lastName, age, gender, email, password, photo } =
       req.body;
 
@@ -20,8 +29,7 @@ app.post("/register", async (req, res) => {
       !age ||
       !gender ||
       !email ||
-      !password ||
-      !photo
+      !password
     ) {
       return res
         .status(400)
@@ -52,9 +60,10 @@ app.post("/register", async (req, res) => {
       status: true,
     });
   } catch (err) {
+    console.log(err)
     return res
       .status(500)
-      .json({ message: "Internal Server Error!", status: false });
+      .json({ message: err.message || "Internal Server Error!", status: false });
   }
 });
 

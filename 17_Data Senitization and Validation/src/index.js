@@ -3,6 +3,7 @@ require("dotenv").config();
 const app = express();
 const connectDB = require("../src/config/db");
 const User = require("./models/user.model");
+const bcrypt = require("bcrypt");
 
 const PORT = process.env.PORT || 3000;
 
@@ -11,12 +12,13 @@ app.use(express.json());
 app.post("/register", async (req, res) => {
   try {
 
-    const mandatoryField = ["firstName", "lastName", "age"];
+        
+    const mandatoryField = ["firstName", "lastName", "age", "gender", "email", "password"];
 
     const isAllowed = mandatoryField.every((k) => Object.keys(req.body).includes(k));
 
     if (!isAllowed) {
-      throw new Errow("Field Missing!")
+      throw new Error("Field Missing!")
     }
 
     const { firstName, lastName, age, gender, email, password, photo } =
@@ -44,13 +46,15 @@ app.post("/register", async (req, res) => {
         .json({ message: "User is already present!", status: false });
     }
 
+    const hashPassword = await bcrypt.hash(password, 10);
+
     const response = await User.create({
       firstName,
       lastName,
       age,
       gender,
       email,
-      password,
+      password : hashPassword,
       photo,
     });
 

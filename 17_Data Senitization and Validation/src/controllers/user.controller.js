@@ -1,9 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 
-const {
-  userValidateForRegister,
-} = require("../../validations/userValidation");
+const { userValidateForRegister } = require("../../validations/userValidation");
 
 // Register
 const register = async (req, res) => {
@@ -34,9 +32,22 @@ const register = async (req, res) => {
       photo,
     });
 
+    const token = response.getJWT();
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+
+    const newResponse = response.toObject();
+    delete newResponse.password;
+
     return res.status(201).json({
       message: "User registered successfully",
-      data: response,
+      data: newResponse,
       status: true,
     });
   } catch (err) {
@@ -54,6 +65,13 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+        status: false,
+      });
+    }
+
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -63,7 +81,7 @@ const login = async (req, res) => {
       });
     }
 
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    const isPasswordMatch = user.verifyPassword(password);
 
     if (!isPasswordMatch) {
       return res.status(400).json({
@@ -72,9 +90,20 @@ const login = async (req, res) => {
       });
     }
 
+    const token = user.getJWT();
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    const newUser = user.toObject();
+    delete newUser.password;
+
     return res.status(200).json({
       message: "User login successfully!",
-      data: user,
+      data: newUser,
       status: true,
     });
   } catch (err) {

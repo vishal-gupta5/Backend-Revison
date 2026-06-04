@@ -16,7 +16,7 @@ const register = async (req, res) => {
     if (user) {
       return res.status(400).json({
         message: "User already exists",
-        status: false,
+        success: false,
       });
     }
 
@@ -41,21 +41,20 @@ const register = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-
     const newResponse = response.toObject();
     delete newResponse.password;
 
     return res.status(201).json({
       message: "User registered successfully",
       data: newResponse,
-      status: true,
+      success: true,
     });
   } catch (err) {
     console.log(err);
 
     return res.status(500).json({
       message: err.message || "Internal Server Error",
-      status: false,
+      success: false,
     });
   }
 };
@@ -68,7 +67,7 @@ const login = async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         message: "Email and password are required",
-        status: false,
+        success: false,
       });
     }
 
@@ -77,16 +76,16 @@ const login = async (req, res) => {
     if (!user) {
       return res.status(400).json({
         message: "User is not present in database!",
-        status: false,
+        success: false,
       });
     }
 
-    const isPasswordMatch = user.verifyPassword(password);
+    const isPasswordMatch = await user.verifyPassword(password);
 
     if (!isPasswordMatch) {
       return res.status(400).json({
         message: "Invalid Credentials!",
-        status: false,
+        success: false,
       });
     }
 
@@ -94,7 +93,8 @@ const login = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "strict",
+      secure: false,
+      sameSite: "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -104,14 +104,14 @@ const login = async (req, res) => {
     return res.status(200).json({
       message: "User login successfully!",
       data: newUser,
-      status: true,
+      success: true,
     });
   } catch (err) {
     console.log(err);
 
     return res.status(500).json({
       message: err.message || "Internal Server Error",
-      status: false,
+      success: false,
     });
   }
 };

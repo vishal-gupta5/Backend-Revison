@@ -116,4 +116,22 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+// Logout
+const logout = async (req, res) => {
+  try {
+    res.cookie("token", null, {
+      expires: new Date(Date.now()),
+    });
+
+    return res
+      .status(200)
+      .json({ message: "User Logout successfully!", success: true });
+  } catch (err) {
+    console.log(err.message);
+    return res
+      .status(400)
+      .json({ message: "Something went wrong!", success: false });
+  }
+};
+
+module.exports = { register, login, logout };

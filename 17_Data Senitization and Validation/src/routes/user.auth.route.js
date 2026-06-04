@@ -7,4 +7,4 @@ userAuth.post("/register", register);
 userAuth.post("/login", login);
 userAuth.post("/logout", auth, logout);
 
-module.exports = userAuth;
+module.exports = userAuth; 

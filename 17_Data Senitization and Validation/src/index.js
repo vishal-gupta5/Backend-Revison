@@ -4,6 +4,7 @@ const app = express();
 const connectDB = require("../src/config/db");
 const userAuth = require("./routes/user.auth.route");
 const cookieParser = require("cookie-parser");
+const redisClient = require("./config/redis")
 
 const PORT = process.env.PORT || 3000;
 
